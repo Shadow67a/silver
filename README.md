@@ -1,7 +1,7 @@
 # Info
 - Silver is an openGL based UI library, it's syntax is heavily inspired by swift ui.
 - ![Alt Text](https://raw.githubusercontent.com/Shadow67a/silver/refs/heads/main/media/iphone.gif)
-- ![Alt Text](https://raw.githubusercontent.com/Shadow67a/silver/refs/heads/main/media/icrt.png)
+- ![Alt Text](https://raw.githubusercontent.com/Shadow67a/silver/refs/heads/main/media/crt.png)
 # Progress
 - Flat background colors ✅
 - Shapes ✅
