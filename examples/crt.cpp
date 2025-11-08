@@ -93,27 +93,13 @@ struct contentView : silver::View
 		t = new silver::Text("Welcome to RobCo Termex v1.3.2;");
 		t->fill(silver::hex(0xffffff))
 		 ->font(terminal)
-		 ->position(-0.3, 0.3, 0.0);
-
-		q = new silver::Quad();
-		q->fill(silver::hex(0x000000, 0.0))
-		 ->scale(0.25, 0.12)
-		 ->position(0.0, -0.2, 0.0)
-		 ->border(silver::hex(0xffffff), 2.0f)
-		 ->onHover([this]{
-			q->fill(silver::hex(0xffffff));
-		}, [this]{
-			q->fill(silver::hex(0x000000, 0.0));
-		});
-
-		i = new silver::Image("./assets/saturn.png");
-		i->scale(1.0, 0.5);
+		 ->position(-0.4, 0.4, 0.0);
 	};
 
 	std::vector<silver::View*> body() override
 	{
 		std::vector<silver::View*> e = {
-			i
+			t
 		};
 
 		return e;

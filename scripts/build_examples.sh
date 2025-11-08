@@ -18,7 +18,9 @@ printf "\nBuilding examples into ../examples :)\n\n"
 
 cmake --build .
 
-mv ./examples/window ../
+mv ./examples/iphone ../
+mv ./examples/crt ../
+mv ./examples/test ../
 
 rm -rf *
 

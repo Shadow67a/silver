@@ -1,22 +1,23 @@
 #ifndef APP_HPP
 #define APP_HPP
 
+#include "./glad.h"
 #include <GLFW/glfw3.h>
 #include <vector>
 
 #include "./Lib.hpp"
 #include "./View.hpp"
+#include "./Shader.hpp"
 
 class silver::App
 {
-	private:
+	public:
 		View* _mainView;
 
-	public:
 		std::vector<GLFWwindow*> windows;
 
 		App(int width, int height, const char* title);
-		App &mainView(View view);
+		App &mainView(View* view);
 		App &run();
 };
 

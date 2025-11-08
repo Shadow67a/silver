@@ -7,6 +7,9 @@
 
 #include "../src/App.hpp"
 #include "../src/View.hpp"
+#include "../src/Shader.hpp"
 #include "../src/Vertices.hpp"
+#include "../src/Elements.hpp"
+#include "../src/Text.hpp"
 
 #endif

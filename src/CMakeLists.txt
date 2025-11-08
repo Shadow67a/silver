@@ -1,12 +1,16 @@
-
 add_library(${PROJECT_NAME} STATIC)
 
 target_sources(${PROJECT_NAME} 
 PRIVATE
 	./glad.c
+	./Lib.cpp
 	./App.cpp
 	./View.cpp
-	./Lib.cpp
+	./Shader.cpp
+	./Elements.cpp
+	./Text.cpp
+	./Animation.cpp
+	./State.cpp
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -15,6 +19,7 @@ PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/src
 	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glfw/include
 	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glm
+	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/freetype/include
 PUBLIC
 	#Library's headers for top-level projects.
 	$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
@@ -23,4 +28,4 @@ PUBLIC
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES} glm)
+target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES} glm freetype)

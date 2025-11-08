@@ -8,16 +8,12 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-
-#define ARROW_CURSOR 0x00036001
-#define HAND_CURSOR  0x00036004
 
 struct Gradient
 {
-	glm::vec4 x;
-	glm::vec4 y;
+	glm::vec3 x;
+	glm::vec3 y;
 	float angle;
 };
 
@@ -33,9 +29,6 @@ namespace silver
 	struct Font;
 	class Text;
 
-	class State;
-	class Animation;
-
 	extern glm::mat4 view;
 	extern glm::mat4 projection;
 	extern int windowWidth;
@@ -43,15 +36,10 @@ namespace silver
 	extern float iTime;
 	extern glm::vec4 cursor;
 	extern FT_Library ft;
-	extern GLFWwindow* currentWindow;
-	extern std::vector<State*> states;
-	extern bool clicked;
-	extern bool hovered;
+	
 
-	glm::vec4 hex(int color);
-	glm::vec4 hex(int color, float opacity);
-	Gradient linearGradient(glm::vec4 x, glm::vec4 y, float angle);
-	void cursorShape(int shape);
+	glm::vec3 hex(int color);
+	Gradient linearGradient(glm::vec3 x, glm::vec3 y, float angle);
 };
 
 #endif
