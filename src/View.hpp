@@ -37,6 +37,8 @@ class silver::View
 		glm::vec3 _position;
                 glm::vec3 _rotation;
                 glm::vec3 _scale;
+		int _layer;
+		silver::View* layer(int index);
 
 		glm::vec3 backgroundColor;
 
@@ -66,6 +68,7 @@ class silver::View
 		View();
 
 		void resize();
+		void order();
 		virtual View *background(glm::vec3 color);
 		virtual View *border(std::variant<Gradient, glm::vec4>, std::variant<float, double, int>);
 		virtual View *border(std::variant<Gradient, glm::vec4>);

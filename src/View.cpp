@@ -17,6 +17,8 @@
 #include "./Animation.hpp"
 #include "./State.hpp"
 
+bool dirty;
+
 silver::View::View()
 {
 	glGenFramebuffers(1, &framebuffer);
@@ -63,6 +65,8 @@ silver::View::View()
 	shader = &viewShader;
 	x = glm::vec4(1.0, 1.0, 1.0, 1.0);
 	mainView = 0;
+	dirty = false;
+	_layer = 0;
 };
 
 silver::View *silver::View::onClick(std::function<void()> callback)
@@ -209,6 +213,7 @@ silver::View *silver::View::position(std::variant<float, double, int> x, std::va
                 silver::states[state]->var = &this->_position.z;
                 this->_position.z = silver::states[state]->x;
         };
+	dirty = true;
 	return this;
 };
 
@@ -346,6 +351,7 @@ void silver::View::hoverHandler()
 	} else {
 		if (_onLeave && _hovered)
 		{
+                        silver::mouse.cursorShape(ARROW_CURSOR);
 			_onLeave();
 		};
 		_hovered = 0;
@@ -418,7 +424,12 @@ void silver::View::render()
 		if (!silver::states[i]->animation.finished)
 		{
 			silver::states[i]->animation.animate();
+			dirty = true;
 		};
+	};
+	if (dirty)
+	{
+		order();
 	};
 
 	//std::vector<silver::View*> elements = body();
@@ -460,4 +471,31 @@ void silver::View::resize()
 
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
         glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, silver::windowWidth, silver::windowHeight);
+};
+
+void silver::View::order()
+{
+	if (elements.size()==0)
+	{
+		return;
+	};
+	for (size_t i = 0; i < elements.size()-1; i++)
+	{
+		for (size_t j = 0; j < elements.size()-i-1; j++)
+		{
+			if (elements[j]->_layer > elements[j+1]->_layer)
+			{
+				silver::View* temp =  elements[j+1];
+				elements[j+1] = elements[j];
+				elements[j] = temp;
+			};
+		};
+	};
+};
+
+silver::View* silver::View::layer(int index)
+{
+	_layer = index;
+	dirty = true;
+	return this;
 };

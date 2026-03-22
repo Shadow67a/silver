@@ -42,6 +42,8 @@ void Mouse::update()
                 clicked = !mouseDown && mouseDownPrev;
                 dragStart = !mouseDownPrev && mouseDown;
                 dragged = (mouseDown && mouseDownPrev);
+		GLFWcursor* cursor = glfwCreateStandardCursor(_shape);
+        	glfwSetCursor(silver::currentWindow, cursor);
 };
 
 glm::vec4 silver::hex(int color)
@@ -65,6 +67,5 @@ Gradient silver::linearGradient(glm::vec4 x, glm::vec4 y, float angle)
 
 void Mouse::cursorShape(int shape)
 {
-	GLFWcursor* cursor = glfwCreateStandardCursor(shape);
-	glfwSetCursor(silver::currentWindow, cursor);
+	_shape = shape;
 };

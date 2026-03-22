@@ -31,6 +31,7 @@ silver::Triangle::Triangle()
 	by = glm::vec4(1.0, 1.0, 1.0, 1.0);
 	_cornerRadius = 0.0;
 	_parent = nullptr;
+        _layer = 0;
 
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -85,6 +86,7 @@ silver::Quad::Quad()
         by = glm::vec4(1.0, 1.0, 1.0, 1.0);
 	_cornerRadius = 0.0;
 	_parent = nullptr;
+        _layer = 0;
 
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
@@ -139,6 +141,7 @@ silver::Image::Image(std::string path)
         by = glm::vec4(1.0, 1.0, 1.0, 1.0);
 	_cornerRadius = 0.0;
 	_parent = nullptr;
+        _layer = 0;
 
 	int nrChannels;
 	unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, STBI_rgb_alpha);

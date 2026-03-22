@@ -3,4 +3,5 @@ examples/crt
 examples/iphone
 examples/wave
 examples/watch
-
+.DS_Store
+**/.DS_Store

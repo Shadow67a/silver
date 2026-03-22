@@ -58,10 +58,15 @@ struct contentView : silver::View
 				dragStart = x;
 				cards[current].rotation = 50.0;
                        		cards[current].position = 0.0;
+				int tmp = cards[current].image->_layer;
+				cards[current].image->layer(0);
+				cards[current+1].image->layer(tmp+1);
                     		cards[current+1].rotation = 0.0;
                       		cards[current+1].position = 0.2;
 				reflections[current].rotation = 50.0;
                                 reflections[current].position = 0.0;
+				reflections[current].image->layer(0);
+				reflections[current+1].image->layer(tmp+1);
                                 reflections[current+1].rotation = 0.0;
                                 reflections[current+1].position = 0.2;
 				current += 1;
@@ -70,8 +75,13 @@ struct contentView : silver::View
 				dragStart = x;
                                 cards[current].rotation = -50.0;
                                 cards[current].position = 0.0;
+				int tmp = cards[current].image->_layer;
+                                cards[current].image->layer(cards[current+1].image->_layer);
+                                cards[current-1].image->layer(tmp);
                                 cards[current-1].rotation = 0.0;
                                 cards[current-1].position = 0.2;
+				reflections[current].image->layer(cards[current].image->_layer);
+                                reflections[current-1].image->layer(tmp);
 				reflections[current].rotation = -50.0;
                                 reflections[current].position = 0.0;
                                 reflections[current-1].rotation = 0.0;
@@ -84,6 +94,9 @@ struct contentView : silver::View
 		  });
 		for (int i = 0; i < 10; i++)
 		{
+                        std::string path = "./assets/" + std::to_string(i+1) + ".png";
+                        cards[i].image = new silver::Image(path);
+                        reflections[i].image = new silver::Image(path);
 			if ((i*0.15)-0.6<0.0)
 			{
 				cards[i].rotation.set(50.0);
@@ -92,18 +105,17 @@ struct contentView : silver::View
 			{
                                 cards[i].rotation.set(-50.0);
                                 reflections[i].rotation.set(-50.0);
+                                cards[i].image->layer(-i-1);
+                                reflections[i].image->layer(-i-1);
 			} else if ((i*0.15)-0.6==0.0)
 			{
 				cards[i].position.set(0.2);
                                 reflections[i].position.set(0.2);
 			};
-			std::string path = "./assets/" + std::to_string(i+1) + ".png";
-			cards[i].image = new silver::Image(path);
 			cards[i].image->position((i*0.15)-0.6, 0.0, animate(1.0, easeOutExpo, cards[i].position))
 				     ->rotation(0.0, animate(1.0, easeOutExpo, cards[i].rotation), 0.0)
 				     ->scale(0.35, 0.35)
 				     ->parent(box);
-                        reflections[i].image = new silver::Image(path);
                         reflections[i].image->position((i*0.15)-0.6, -0.35, animate(1.0, easeOutExpo, reflections[i].position))
                                      ->rotation(180.0, animate(1.0, easeOutExpo, reflections[i].rotation), 0.0)
                                      ->scale(0.35, 0.35)

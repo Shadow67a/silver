@@ -92,6 +92,7 @@ silver::App &silver::App::mainView(View* view)
 	this->_mainView = view;
 	this->_mainView->mainView = 1;
 	this->_mainView->body();
+	this->_mainView->order();
 	return *this;
 };
 

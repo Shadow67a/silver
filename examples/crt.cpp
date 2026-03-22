@@ -56,7 +56,7 @@ const char* crtShader =
 "	} else {\n"
 "		image *= 0.8;\n"
 "	};\n"
-/*"	vec4 glow = vec4(gaussianBlur(iChannel0, distorted, pixelSize, 10, 200.0), 1.0);\n"
+"	vec4 glow = vec4(gaussianBlur(iChannel0, distorted, pixelSize, 10, 200.0), 1.0);\n"
 "       glow.r *= 0.0;\n"
 "       glow.g *= 1.4;\n"
 "       glow.b *= 0.5;\n"
@@ -67,8 +67,7 @@ const char* crtShader =
 "               glow *= 1.0;\n"
 "       } else {\n"
 "               glow *= 0.0;\n"
-"       };\n"*/
-"	vec4 glow = vec4(0.0);\n"
+"       };\n"
 "	image += glow*0.75;\n"
 "	fragColor = vec4(image.rgb, 1.0);\n"
 "}\n";

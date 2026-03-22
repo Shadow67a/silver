@@ -32,6 +32,7 @@ struct Mouse
         bool dragStart;
         bool clicked;
         bool hovered;
+	int _shape;
 	glm::vec4 cursor;
 
 	void update();
