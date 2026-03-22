@@ -14,11 +14,28 @@
 #define ARROW_CURSOR 0x00036001
 #define HAND_CURSOR  0x00036004
 
+#define MOUSE_LEFT 0
+#define MOUSE_RIGHT 1
+
 struct Gradient
 {
 	glm::vec4 x;
 	glm::vec4 y;
 	float angle;
+};
+
+struct Mouse
+{
+        bool mouseDown;
+        bool mouseDownPrev;
+        bool dragged;
+        bool dragStart;
+        bool clicked;
+        bool hovered;
+	glm::vec4 cursor;
+
+	void update();
+        void cursorShape(int shape);
 };
 
 namespace silver
@@ -38,20 +55,20 @@ namespace silver
 
 	extern glm::mat4 view;
 	extern glm::mat4 projection;
+	extern glm::mat4 invView;
+        extern glm::mat4 invProjection;
 	extern int windowWidth;
 	extern int windowHeight;
 	extern float iTime;
-	extern glm::vec4 cursor;
 	extern FT_Library ft;
 	extern GLFWwindow* currentWindow;
 	extern std::vector<State*> states;
-	extern bool clicked;
-	extern bool hovered;
+
+	extern Mouse mouse;
 
 	glm::vec4 hex(int color);
 	glm::vec4 hex(int color, float opacity);
 	Gradient linearGradient(glm::vec4 x, glm::vec4 y, float angle);
-	void cursorShape(int shape);
 };
 
 #endif

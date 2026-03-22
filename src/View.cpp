@@ -61,6 +61,8 @@ silver::View::View()
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	shader = &viewShader;
+	x = glm::vec4(1.0, 1.0, 1.0, 1.0);
+	mainView = 0;
 };
 
 silver::View *silver::View::onClick(std::function<void()> callback)
@@ -126,22 +128,6 @@ silver::View *silver::View::border(std::variant<Gradient, glm::vec4> color)
         return this;
 };
 
-/*silver::View *silver::View::border(Gradient g, std::variant<float, int> v)
-{
-	this->bx = g.x;
-	this->by = g.y;
-	if (std::holds_alternative<float>(v)) {
-                this->borderWidth = std::get<float>(v);
-        } else if (std::holds_alternative<int>(v)){
-                int state = std::get<int>(v);
-                silver::states[state]->var = &borderWidth;
-                borderWidth = silver::states[state]->x;
-        };
-	bGradientTransform = glm::mat4(1.0f);
-        bGradientTransform = glm::rotate(bGradientTransform, g.angle, glm::vec3(0.0f, 0.0f, 1.0f));
-	return this;
-};*/
-
 silver::View *silver::View::fill(std::variant<glm::vec4, Gradient> color)
 {
 	if (std::holds_alternative<Gradient>(color))
@@ -160,6 +146,18 @@ silver::View *silver::View::fill(std::variant<glm::vec4, Gradient> color)
                 gradientTransform = glm::rotate(gradientTransform, 0.0f, glm::vec3(0.0f, 0.0f, 1.0f));
         };
         return this;
+};
+
+silver::View *silver::View::opacity(float value)
+{
+	this->x.a = value;
+	return this;
+};
+
+silver::View *silver::View::tint(glm::vec4 color)
+{
+	this->x = color;
+	return this;
 };
 
 silver::View *silver::View::cornerRadius(std::variant<float, double, int> v)
@@ -214,15 +212,68 @@ silver::View *silver::View::position(std::variant<float, double, int> x, std::va
 	return this;
 };
 
-silver::View *silver::View::rotation(float x, float y, float z)
+silver::View *silver::View::rotation(std::variant<float, double, int> x, std::variant<float, double, int> y, std::variant<float, double, int> z)
 {
-        this->_rotation = glm::vec3(glm::radians(x), glm::radians(y), glm::radians(z));
+	if (std::holds_alternative<float>(x)) {
+                float xRot = std::get<float>(x);
+                this->_rotation.x = xRot;
+        } else if (std::holds_alternative<double>(x)){
+                float xRot = static_cast<float>(std::get<double>(x));
+                this->_rotation.x = xRot;
+        } else if (std::holds_alternative<int>(x)){
+                int state = std::get<int>(x);
+                silver::states[state]->var = &this->_rotation.x;
+                this->_rotation.x = silver::states[state]->x;
+        };
+        if (std::holds_alternative<float>(y)) {
+                float yRot = std::get<float>(y);
+                this->_rotation.y = yRot;
+        } else if (std::holds_alternative<double>(y)){
+                float yRot = static_cast<float>(std::get<double>(y));
+                this->_rotation.y = yRot;
+        } else if (std::holds_alternative<int>(y)){
+                int state = std::get<int>(y);
+                silver::states[state]->var = &this->_rotation.y;
+                this->_rotation.y = silver::states[state]->x;
+        };
+        if (std::holds_alternative<float>(z)) {
+                float zRot = std::get<float>(z);
+                this->_rotation.z = zRot;
+        } else if (std::holds_alternative<double>(z)){
+                float zRot = static_cast<float>(std::get<double>(z));
+                this->_rotation.z = zRot;
+        } else if (std::holds_alternative<int>(z)){
+                int state = std::get<int>(z);
+                silver::states[state]->var = &this->_rotation.z;
+                this->_rotation.z = silver::states[state]->x;
+        };
 	return this;
 };
 
-silver::View *silver::View::scale(float x, float y)
+silver::View *silver::View::scale(std::variant<float, double, int> x, std::variant<float, double, int> y)
 {
-        this->_scale = glm::vec3(x, y, 1.0);
+        if (std::holds_alternative<float>(x)) {
+                float xSca = std::get<float>(x);
+                this->_scale.x = xSca;
+        } else if (std::holds_alternative<double>(x)){
+                float xSca = static_cast<float>(std::get<double>(x));
+                this->_scale.x = xSca;
+        } else if (std::holds_alternative<int>(x)){
+                int state = std::get<int>(x);
+                silver::states[state]->var = &this->_scale.x;
+                this->_scale.x = silver::states[state]->x;
+        };
+        if (std::holds_alternative<float>(y)) {
+                float ySca = std::get<float>(y);
+                this->_scale.y = ySca;
+        } else if (std::holds_alternative<double>(y)){
+                float ySca = static_cast<float>(std::get<double>(y));
+                this->_scale.y = ySca;
+        } else if (std::holds_alternative<int>(y)){
+                int state = std::get<int>(y);
+                silver::states[state]->var = &this->_scale.y;
+                this->_scale.y = silver::states[state]->x;
+        };
 	return this;
 };
 
@@ -231,9 +282,9 @@ void silver::View::hoverHandler()
 	glm::vec4 topRight = modelMatrix * glm::vec4(0.5, 0.5, 0.0, 1.0);
 	glm::vec4 bottomLeft = modelMatrix * glm::vec4(-0.5, -0.5, 0.0, 1.0);
 
-	if (silver::cursor.x<topRight.x && silver::cursor.x>bottomLeft.x && silver::cursor.y<topRight.y && silver::cursor.y>bottomLeft.y)
+	if (silver::mouse.cursor.x<topRight.x && silver::mouse.cursor.x>bottomLeft.x && silver::mouse.cursor.y<topRight.y && silver::mouse.cursor.y>bottomLeft.y)
 	{
-		glm::vec2 c(silver::cursor.x, silver::cursor.y);
+		glm::vec2 c(silver::mouse.cursor.x, silver::mouse.cursor.y);
 		c.x = (c.x-bottomLeft.x)/(topRight.x-bottomLeft.x);
                 c.y = (c.y-bottomLeft.y)/(topRight.y-bottomLeft.y);
 		glm::vec2 tr(1.0-_cornerRadius, 1.0-_cornerRadius);
@@ -257,24 +308,39 @@ void silver::View::hoverHandler()
 				_onHover();
 				_hovered = 1;
 			};
-			silver::hovered = 1;
-			if (silver::clicked && _onClick)
+			silver::mouse.hovered = 1;
+			if (silver::mouse.clicked && _onClick)
 			{
 				_onClick();
 			};
-			if (silver::hovered && (_onHover || _onClick))
+			if (silver::mouse.hovered && (_onHover || _onClick || _onDrag))
 			{
-				silver::cursorShape(HAND_CURSOR);
+				silver::mouse.cursorShape(HAND_CURSOR);
 			};
+			if (silver::mouse.dragStart && _onDrag)
+			{
+				dr.initialCursor = silver::mouse.cursor;
+				dr.initialPosition = glm::vec2(_position.x, _position.y);
+			};
+			if(silver::mouse.dragged && _onDrag)
+			{
+				glm::vec2 pos = dr.initialPosition + (glm::vec2(silver::mouse.cursor.x, silver::mouse.cursor.y)-dr.initialCursor);
+				_onDrag(pos.x, pos.y);
+			};
+	                if (_onDragLeave && silver::mouse.clicked)
+			{
+	                        //using silver::clicked cuz its triggered on mouse up;
+        	                _onDragLeave();
+               	 	};
 		} else {
 			if (_onLeave && _hovered)
 			{
 				_onLeave();
 			};
 			_hovered = 0;
-			if (!silver::hovered)
+			if (!silver::mouse.hovered)
 			{
-				silver::cursorShape(ARROW_CURSOR);
+				silver::mouse.cursorShape(ARROW_CURSOR);
 			};
 		};
 	} else {
@@ -283,9 +349,9 @@ void silver::View::hoverHandler()
 			_onLeave();
 		};
 		_hovered = 0;
-		if (!silver::hovered)
+		if (!silver::mouse.hovered)
 		{
-			silver::cursorShape(ARROW_CURSOR);
+			silver::mouse.cursorShape(ARROW_CURSOR);
 		};
 	};
 };
@@ -303,7 +369,26 @@ silver::View* silver::View::onHover(std::function<void()> callback, std::functio
 	return this;
 };
 
-std::vector<silver::View*> silver::View::body()
+silver::View* silver::View::onDrag(std::function<void(float x, float y)> callback)
+{
+	this->_onDrag = callback;
+	return this;
+};
+
+silver::View* silver::View::onDrag(std::function<void(float x, float y)> callback, std::function<void()> onLeave)
+{
+        this->_onDrag = callback;
+	this->_onDragLeave = onLeave;
+        return this;
+};
+
+silver::View* silver::View::frame(std::function<void()> callback)
+{
+	this->_frame = callback;
+	return this;
+};
+
+void silver::View::body()
 {
 	//must be overriden;
 };
@@ -316,10 +401,17 @@ silver::View* silver::View::parent(silver::View* parentView)
 
 void silver::View::render()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
+	if (mainView)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+		glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT);
+	};
+
+	if (_frame)
+	{
+		_frame();
+	};
 
 	for (int i = 0; i < silver::states.size(); i++)
 	{
@@ -329,32 +421,34 @@ void silver::View::render()
 		};
 	};
 
-	std::vector<silver::View*> elements = body();
+	//std::vector<silver::View*> elements = body();
 	for (int i=0; i<elements.size(); i++)
 	{
 		elements[i]->hoverHandler();
 		elements[i]->render();
 	};
-	silver::clicked = 0;
-	silver::hovered = 0;
 
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, interFrameBuffer);
-	glReadBuffer(GL_COLOR_ATTACHMENT0);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-	glBlitFramebuffer(0, 0, silver::windowWidth, silver::windowHeight, 0, 0, silver::windowWidth, silver::windowHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	if (mainView)
+	{
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, interFrameBuffer);
+		glReadBuffer(GL_COLOR_ATTACHMENT0);
+		glDrawBuffer(GL_COLOR_ATTACHMENT0);
+		glBlitFramebuffer(0, 0, silver::windowWidth, silver::windowHeight, 0, 0, silver::windowWidth, silver::windowHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClearColor(1.0, 1.0, 1.0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT);
 
-	shader->use();
-	shader->setFloat("iTime", silver::iTime);
+		shader->use();
+		shader->setFloat("iTime", silver::iTime);
+		shader->setVec4("tint", x);
 
-	glBindTexture(GL_TEXTURE_2D, screenTexture);
-	glBindVertexArray(VAO);
-	glDisable(GL_DEPTH_TEST);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, screenTexture);
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	};
 };
 
 void silver::View::resize()

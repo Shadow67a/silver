@@ -61,7 +61,7 @@ silver::Font::Font(const char* path)
 			texture,
 			glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
 			glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-			face->glyph->advance.x
+			static_cast<unsigned int>(face->glyph->advance.x)
 		};
 		Characters.insert(std::pair<char, Character>(c, character));
 	};
@@ -108,7 +108,7 @@ void silver::Font::resize(int size)
                         texture,
                         glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
                         glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-                        face->glyph->advance.x
+                        static_cast<unsigned int>(face->glyph->advance.x)
                 };
                 Characters.insert(std::pair<char, Character>(c, character));
         };
@@ -238,9 +238,9 @@ void silver::Text::render()
 	shader->setVec3("color", fillColor);
 	modelMatrix = glm::mat4(1.0);
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(_position.x+(p ? _parent->_position.x*-2.41 : 0.0), _position.y+(p ? _parent->_position.y*2.41 : 0.0), _position.z));
-        modelMatrix = glm::rotate(modelMatrix, _rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-        modelMatrix = glm::rotate(modelMatrix, _rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-        modelMatrix = glm::rotate(modelMatrix, _rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(_rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(_rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0, 1.0, 1.0));
 
 //	glm::mat4 orthoProjection = glm::ortho(0.0f, (float)silver::windowWidth, 0.0f, (float)silver::windowHeight);

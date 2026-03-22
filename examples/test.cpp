@@ -3,7 +3,7 @@
 #include "../include/silver.hpp"
 
 const char* backgroundShaderSource =
-"#version 460 core\n"
+"#version 410 core\n"
 "in vec2 uv;\n"
 "uniform float iTime;\n"
 "uniform sampler2D iChannel0;\n"
@@ -78,12 +78,10 @@ struct contentView: silver::View
 		this->shader = &backgroundShader;
 	};
 
-	std::vector<silver::View*> body() override
+	void body() override
         {
-                std::vector<silver::View*> e = {
+                std::vector<silver::View*> elements = {
                 };
-
-                return e;
         };
 };
 

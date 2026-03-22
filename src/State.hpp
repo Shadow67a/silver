@@ -11,15 +11,18 @@ class silver::State
 		float *var;
 		int index;
 		silver::Animation animation;
-
 		State (float value);
 
 		State &operator=(float);
 		State &operator=(double);
+		State &operator+=(float);
+                State &operator+=(double);
 		bool operator==(float) const;
 		bool operator==(double) const;
 		operator int() const;
 		operator float() const;
+		void set(float value);
+		void dispatchAnimation(float value);
 };
 
 #endif

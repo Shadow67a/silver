@@ -1,6 +1,6 @@
-add_library(${PROJECT_NAME} STATIC)
+add_library(silver STATIC)
 
-target_sources(${PROJECT_NAME} 
+target_sources(silver 
 PRIVATE
 	./glad.c
 	./Lib.cpp
@@ -13,19 +13,19 @@ PRIVATE
 	./State.cpp
 )
 
-target_include_directories(${PROJECT_NAME}
+target_include_directories(silver
 PRIVATE
 	#Internal library headers and dependencies.
 	${CMAKE_CURRENT_SOURCE_DIR}/src
-	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glfw/include
-	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glm
-	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/freetype/include
+#	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glfw/include
+#	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glm
+#	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/freetype/include
 PUBLIC
 	#Library's headers for top-level projects.
-	$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
 
 	#Library's headers for external projects.
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES} glm freetype)
+target_link_libraries(silver glfw ${GLFW_LIBRARIES} glm::glm Freetype::Freetype)

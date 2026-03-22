@@ -5,9 +5,12 @@ set(CMAKE_CXX_STANDARD 17)
 project(silver LANGUAGES CXX C VERSION 0.1)
 option(Examples "Should examples be built?" OFF)
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glfw)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glm)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/freetype)
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glfw)
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glm)
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/freetype)
+find_package(glfw3 3.3 REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(Freetype REQUIRED)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
 

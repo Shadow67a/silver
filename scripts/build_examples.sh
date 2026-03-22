@@ -21,6 +21,8 @@ cmake --build .
 mv ./examples/iphone ../
 mv ./examples/crt ../
 mv ./examples/test ../
+mv ./examples/coverflow ../
+mv ./examples/watch ../
 
 rm -rf *
 

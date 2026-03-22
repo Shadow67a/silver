@@ -11,5 +11,7 @@
 #include "../src/Vertices.hpp"
 #include "../src/Elements.hpp"
 #include "../src/Text.hpp"
+#include "../src/State.hpp"
+#include "../src/Animation.hpp"
 
 #endif

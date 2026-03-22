@@ -11,13 +11,20 @@
 
 #include "./Lib.hpp"
 #include "./Shader.hpp"
-#include "./Animation.hpp"
-#include "./State.hpp"
+//#include "./Animation.hpp"
+//#include "./State.hpp"
+
+struct dragState
+{
+	glm::vec2 initialCursor;
+	glm::vec2 initialPosition;
+};
 
 class silver::View
 {
 	public:
 		Shader* shader;
+		bool mainView;
 		unsigned int framebuffer;
 		unsigned int interFrameBuffer;
 		unsigned int renderTexture;
@@ -46,32 +53,45 @@ class silver::View
 		std::function<void()> _onHover;
 		std::function<void()> _onLeave;
 		std::function<void()> _onClick;
+		std::function<void()> _frame;
+
+		dragState dr;
+		std::function<void(float x, float y)> _onDrag;
+		std::function<void()> _onDragLeave;
 		bool _hovered;
 
 		View* _parent;
+		std::vector<silver::View*> elements;
 
 		View();
 
 		void resize();
-		virtual View* onClick(std::function<void()> callback);
 		virtual View *background(glm::vec3 color);
 		virtual View *border(std::variant<Gradient, glm::vec4>, std::variant<float, double, int>);
 		virtual View *border(std::variant<Gradient, glm::vec4>);
 		virtual View *cornerRadius(std::variant<float, double, int> v);
 
 		virtual View *fill(std::variant<glm::vec4, Gradient> color);
+		virtual View *opacity(float value);
+		virtual View *tint(glm::vec4 color);
 
 		virtual View *position(std::variant<float, double, int> x, std::variant<float, double, int> y, std::variant<float, double, int> z);
-		virtual View *rotation(float x, float y, float z);
-		virtual View *scale(float x, float y);
+		virtual View *rotation(std::variant<float, double, int> x, std::variant<float, double, int> y, std::variant<float, double, int> z);
+		virtual View *scale(std::variant<float, double, int> x, std::variant<float, double, int> y);
+
+                virtual View* onClick(std::function<void()> callback);
 
 		virtual View* onHover(std::function<void()> callback);
 		virtual View* onHover(std::function<void()> callback, std::function<void()> onLeave);
 		virtual void hoverHandler();
 
+		virtual View* onDrag(std::function<void(float x, float y)> callback);
+                virtual View* onDrag(std::function<void(float x, float y)> callback, std::function<void()> onLeave);
 		virtual View* parent(View* parentView);
 
-		virtual std::vector<silver::View*> body();
+		virtual View* frame(std::function<void()> callback);
+
+		virtual void body();
 		virtual void render();
 };
 

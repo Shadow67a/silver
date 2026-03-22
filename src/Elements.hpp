@@ -16,10 +16,7 @@
 #include "./Shader.hpp"
 
 class silver::Triangle : public silver::View
-{
-	private:
-		Shader* shader;
-	public:
+{	public:
 		unsigned int VAO;
 		unsigned int VBO;
 
@@ -28,10 +25,7 @@ class silver::Triangle : public silver::View
 };
 
 class silver::Quad : public silver::View
-{
-        private:
-                Shader* shader;
-        public:
+{       public:
                 unsigned int VAO;
                 unsigned int VBO;
 
@@ -41,16 +35,13 @@ class silver::Quad : public silver::View
 
 class silver::Image : public silver::View
 {
-	private:
-		Shader* shader;
-
 	public:
 		unsigned int VAO;
 		unsigned int VBO;
 		unsigned int texture;
 		int width, height;
 
-		Image(const char* path);
+		Image(std::string path);
 		void render() override;
 };
 #endif

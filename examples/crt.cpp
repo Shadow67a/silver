@@ -2,7 +2,7 @@
 #include "../include/silver.hpp"
 
 const char* crtShader =
-"#version 460 core\n"
+"#version 410 core\n"
 "in vec2 uv;\n"
 "uniform float iTime;\n"
 "uniform sampler2D iChannel0;\n"
@@ -40,8 +40,7 @@ const char* crtShader =
 "	distorted /= 2.0;\n"
 "	if (distorted.x>1.0 || distorted.x<0.0 || distorted.y>1.0 || distorted.y<0.0)\n"
 "	{\n"
-"		fragColor = vec4(0.0, 0.0, 0.0, 1.0);\n"
-"		return;\n"
+"		discard;\n"
 "	};\n"
 "	vec4 image = texture(iChannel0, distorted);\n"
 "	image.xyz -= clamp(sin(distorted.y*600.0+iTime*50.0), 0.0, 1.0)*0.1*smoothstep(0.75, 0.0, r)*1.5;\n"
@@ -51,13 +50,13 @@ const char* crtShader =
 "	image.b *= 0.5;\n"
 "	image *= 0.5;\n"
 "	float l = image.r + image.g + image.b;\n"
-"	if (l>0.8)\n"
+"	if (l>0.5)\n"
 "	{\n"
 "	        image *= 1.8;\n"
 "	} else {\n"
 "		image *= 0.8;\n"
 "	};\n"
-"	vec4 glow = vec4(gaussianBlur(iChannel0, distorted, pixelSize, 10, 50.0), 1.0);\n"
+/*"	vec4 glow = vec4(gaussianBlur(iChannel0, distorted, pixelSize, 10, 200.0), 1.0);\n"
 "       glow.r *= 0.0;\n"
 "       glow.g *= 1.4;\n"
 "       glow.b *= 0.5;\n"
@@ -68,7 +67,8 @@ const char* crtShader =
 "               glow *= 1.0;\n"
 "       } else {\n"
 "               glow *= 0.0;\n"
-"       };\n"
+"       };\n"*/
+"	vec4 glow = vec4(0.0);\n"
 "	image += glow*0.75;\n"
 "	fragColor = vec4(image.rgb, 1.0);\n"
 "}\n";
@@ -78,10 +78,9 @@ silver::Font terminal;
 
 struct contentView : silver::View
 {
-	silver::Text* t;
-	silver::Quad* q;
-	silver::Image *i;
 
+	silver::Image* i;
+	silver::Text* t;
 	contentView()
 	{
 		terminal = silver::Font("./assets/terminal.ttf");
@@ -89,20 +88,24 @@ struct contentView : silver::View
 		crt = silver::Shader(viewVertexSource, crtShader);
 		this->shader = &crt;
 
-		background(silver::hex(0x1c1c1c));
-		t = new silver::Text("Welcome to RobCo Termex v1.3.2;");
-		t->fill(silver::hex(0xffffff))
-		 ->font(terminal)
-		 ->position(-0.4, 0.4, 0.0);
+		background(silver::hex(0x0000));
+
+                i = new silver::Image("./assets/img.png");
+		i->tint(silver::hex(0x808080))
+		 ->border(silver::hex(0xffffff), 1.0);
+
+		t = new silver::Text("Op. Fury VII;");
+		t->font(terminal)
+		 ->fill(silver::hex(0xffffff))
+		 ->scale(32)
+		 ->position(-0.5, 0.65, 0.0);
 	};
 
-	std::vector<silver::View*> body() override
+	void body() override
 	{
-		std::vector<silver::View*> e = {
-			t
+		elements = {
+			t, i
 		};
-
-		return e;
 	};
 };
 

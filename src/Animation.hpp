@@ -12,13 +12,18 @@ class silver::Animation
 		float target;
 		float *var;
 		float time;
+		float delay;
+		float dtime;
 		float (*easing)(float);
 		void animate();
 };
 
 int animate(float time, float(*easing)(float), int state);
+int animate(float time, float delay, float(*easing)(float), int state);
 
 float easeOutExpo(float t);
 float linear(float t);
+float easeOutElastic(float t);
+float easeOutBack(float t);
 
 #endif

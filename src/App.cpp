@@ -8,6 +8,9 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "./stb_image.h"
+
 #include "./glad.h"
 #include <GLFW/glfw3.h>
 
@@ -22,19 +25,12 @@ silver::App* app;
 void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
 	silver::projection = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
+        silver::invProjection = glm::inverse(silver::projection);
 	silver::windowWidth = width;
 	silver::windowHeight = height;
 	glViewport(0, 0, width, height);
 	app->_mainView->resize();
 };
-
-void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
-{
-	if (button==GLFW_MOUSE_BUTTON_LEFT && action==GLFW_PRESS)
-	{
-		silver::clicked = 1;
-	};
-}
 
 silver::App::App(int width, int height, const char* title)
 {
@@ -42,9 +38,10 @@ silver::App::App(int width, int height, const char* title)
 
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
 
 	silver::windowWidth = width;
 	silver::windowHeight = height;
@@ -69,12 +66,13 @@ silver::App::App(int width, int height, const char* title)
 	glViewport(0, 0, width, height);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	glfwSetFramebufferSizeCallback(windows[0], framebufferSizeCallback);
-	glfwSetMouseButtonCallback(windows[0], mouseButtonCallback);
 
-	view = glm::lookAt(glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+	silver::view = glm::lookAt(glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 	silver::projection = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
+	silver::invView = glm::inverse(silver::view);
+        silver::invProjection = glm::inverse(silver::projection);
 	flatShaded = silver::Shader(flatShadedVertexSource, flatShadedFragmentSource);
 	imageShader = silver::Shader(imageVertexSource, imageFragmentSource);
 	textShader = silver::Shader(textVertexSource, textFragmentSource);
@@ -86,11 +84,14 @@ silver::App::App(int width, int height, const char* title)
         };
 
 	arial = silver::Font("./assets/arial.ttf");
+        stbi_set_flip_vertically_on_load(true);
 };
 
 silver::App &silver::App::mainView(View* view)
 {
 	this->_mainView = view;
+	this->_mainView->mainView = 1;
+	this->_mainView->body();
 	return *this;
 };
 
@@ -99,21 +100,18 @@ silver::App &silver::App::run()
 	while(!glfwWindowShouldClose(windows[0]))
 	{
 		silver::iTime = static_cast<float>(glfwGetTime());
-		double mouseX = 0.0;
-		double mouseY = 0.0;
-		glfwGetCursorPos(windows[0], &mouseX, &mouseY);
-		//NDC;
-		mouseX = (2.0*mouseX/windowWidth)-1.0;
-		mouseY = 1.0-(2.0*mouseY/windowHeight);
-		silver::cursor = glm::vec4(mouseX, mouseY, -1.0, 1.0);
-		glm::mat4 invProj = glm::inverse(silver::projection);
-		glm::mat4 invView = glm::inverse(silver::view);
-		silver::cursor = silver::cursor * invProj * invView;
+
+		silver::mouse.update();
 
 		this->_mainView->render();
 
+		silver::mouse.clicked = 0;
+		silver::mouse.hovered = 0;
+		silver::mouse.mouseDownPrev = silver::mouse.mouseDown;
+
 		glfwSwapBuffers(windows[0]);
 		glfwPollEvents();
+		glfwSwapInterval(1);
 	};
 	FT_Done_FreeType(silver::ft);
 	glfwTerminate();

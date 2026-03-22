@@ -2,7 +2,6 @@
 #include <string>
 #include <map>
 
-#define STB_IMAGE_IMPLEMENTATION
 #include "./stb_image.h"
 
 #include "./glad.h"
@@ -53,10 +52,10 @@ void silver::Triangle::render()
 	shader->use();
 
 	modelMatrix = glm::mat4(1.0f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(_position.x+(_parent != nullptr ? +_parent->_position.x : 0.0), _position.y+(_parent != nullptr ? +_parent->_position.y : 0.0), _position.z+(_parent != nullptr ? +_parent->_position.z : 0.0)));
-	modelMatrix = glm::rotate(modelMatrix, _rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-	modelMatrix = glm::rotate(modelMatrix, _rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-	modelMatrix = glm::rotate(modelMatrix, _rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(_position.x+(_parent != nullptr ? _parent->_position.x : 0.0), _position.y+(_parent != nullptr ? _parent->_position.y : 0.0), _position.z+(_parent != nullptr ? _parent->_position.z : 0.0)));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(_rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(_rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
 	modelMatrix = glm::scale(modelMatrix, _scale);
 
 	shader->setMat4("modelMatrix", modelMatrix);
@@ -107,10 +106,10 @@ void silver::Quad::render()
         shader->use();
 
 	modelMatrix = glm::mat4(1.0f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(_position.x+(_parent != nullptr ? +_parent->_position.x : 0.0), _position.y+(_parent != nullptr ? +_parent->_position.y : 0.0), _position.z+(_parent != nullptr ? +_parent->_position.z : 0.0)));
-        modelMatrix = glm::rotate(modelMatrix, _rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-        modelMatrix = glm::rotate(modelMatrix, _rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-        modelMatrix = glm::rotate(modelMatrix, _rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(_position.x+(_parent != nullptr ? _parent->_position.x : 0.0), _position.y+(_parent != nullptr ? _parent->_position.y : 0.0), _position.z+(_parent != nullptr ? _parent->_position.z : 0.0)));
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(_rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(_rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         modelMatrix = glm::scale(modelMatrix, _scale);
 
         shader->setMat4("modelMatrix", modelMatrix);
@@ -128,12 +127,12 @@ void silver::Quad::render()
         glDrawArrays(GL_TRIANGLES, 0, 6);
 };
 
-silver::Image::Image(const char* path)
+silver::Image::Image(std::string path)
 {
 	x = glm::vec4(1.0, 1.0, 1.0, 1.0);
-        y = glm::vec4(1.0, 1.0, 1.0, 1.0);
+        y = glm::vec4(1.0, 1.0, 1.0, 0.0);
 	_position = glm::vec3(0.0, 0.0, 0.0);
-        _rotation = glm::vec3(0.0, glm::radians(180.0), 0.0);
+        _rotation = glm::vec3(0.0, 0.0, 0.0);
         _scale = glm::vec3(0.5, 0.5, 0.5);
 	borderWidth = 0.0;
         bx = glm::vec4(1.0, 1.0, 1.0, 1.0);
@@ -142,17 +141,17 @@ silver::Image::Image(const char* path)
 	_parent = nullptr;
 
 	int nrChannels;
-	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load(path, &width, &height, &nrChannels, STBI_rgb_alpha);
+	unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, STBI_rgb_alpha);
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	} else {
 		std::cout << "[ERROR!]: Failed to load image: " << path << std::endl;
@@ -179,10 +178,10 @@ void silver::Image::render()
 	shader->use();
 
         modelMatrix = glm::mat4(1.0f);
-        modelMatrix = glm::translate(modelMatrix, glm::vec3(_position.x+(_parent != nullptr ? +_parent->_position.x : 0.0), _position.y+(_parent != nullptr ? +_parent->_position.y : 0.0), _position.z+(_parent != nullptr ? +_parent->_position.z : 0.0)));
-        modelMatrix = glm::rotate(modelMatrix, _rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-        modelMatrix = glm::rotate(modelMatrix, _rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-        modelMatrix = glm::rotate(modelMatrix, _rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+        modelMatrix = glm::translate(modelMatrix, glm::vec3(_position.x+(_parent != nullptr ? _parent->_position.x : 0.0), _position.y+(_parent != nullptr ? _parent->_position.y : 0.0), _position.z+(_parent != nullptr ? _parent->_position.z : 0.0)));
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(_rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(_rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         modelMatrix = glm::scale(modelMatrix, _scale);
 
         shader->setMat4("modelMatrix", modelMatrix);
@@ -193,6 +192,8 @@ void silver::Image::render()
         shader->setMat4("bGradientTransform", bGradientTransform);
 	shader->setFloat("borderWidth", borderWidth);
 	shader->setFloat("cornerRadius", _cornerRadius);
+	shader->setVec4("tint", x);
+	shader->setVec4("fill", y);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);

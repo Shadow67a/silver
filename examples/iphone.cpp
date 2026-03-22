@@ -45,7 +45,8 @@ struct contentView : silver::View
 
 		background(silver::hex(0xffffff));
 		i = new silver::Image("./assets/bg.jpg");
-		i->scale(0.38, 0.85);
+		i->scale(0.38, 0.85)
+		 ->position(0.0, 0.0, 0.0);
 
 		clock = new silver::Text("7:02");
 		clock->font(rails)
@@ -62,7 +63,7 @@ struct contentView : silver::View
 		q = new silver::Quad();
 		q->fill(silver::hex(0xfffcff))
 		 ->scale(0.38, 0.40)
-		 ->position(0.0, animate(1.0, easeOutExpo, s), 0.0)
+		 ->position(0.0, animate(1.0, easeOutExpo, s), 0.01)
 		 ->cornerRadius(0.1)
 		 ->onHover([this]{
 			s = -0.3;
@@ -144,13 +145,11 @@ struct contentView : silver::View
 			 ->parent(q);
 	};
 
-	std::vector<silver::View*> body() override
+	void body() override
 	{
-		std::vector<silver::View*> e = {
-			nyHeavyQ, railsQ, stencilQ, separator, q, i, clock, date, customizeText, nyHeavyT, railsT, stencilT
+		elements = {
+			i, q, nyHeavyQ, railsQ, stencilQ, separator, clock, date, customizeText, nyHeavyT, railsT, stencilT
 		};
-
-		return e;
 	};
 };
 
