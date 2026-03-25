@@ -1,6 +1,7 @@
 # Info
 - Silver is an openGL based UI library, it's syntax is heavily inspired by swift UI.
 - I have also ported it to the nintendo switch, will be uploaded soon.
+- This project is **NOT** "vibecoded" or made with any AI tools! I did use emojis in the readme to make the progress section more understandable. However since learning that AI commonly uses emojis, I have removed them.
 
 # Examples
 - iphone remake
